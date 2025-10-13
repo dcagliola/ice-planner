@@ -33,6 +33,7 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
     this.totalCoach = 0;
     this.totalOverhead = 0;
     this.totalCost = 0;
+    this.costPerPlayer = 0;
     this.logo = "https://www.wanderlustmagazine.com/wp-content/uploads/2024/03/dreamstime_xl_41534027.jpg";
   }
 
@@ -54,6 +55,7 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
       totalOverhead: { type: Number },
       totalCost: { type: Number },
       logo: { type: String },
+      costPerPlayer: { type: Number },
     };
   }
 
@@ -62,14 +64,54 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
     return [super.styles,
     css`
       :host {
-        display: block;
-        color: var(--ddd-theme-primary);
-        background-color: var(--ddd-theme-accent);
-        font-family: var(--ddd-font-navigation);
+        --background-color: #ffffff;
+        --text-color: #000000;
+        --accent-color: #8fbaf1;
       }
+
+      @media (prefers-color-scheme: dark) {
+        :host {
+          --background-color: #121212;
+          --text-color: #ffffff;
+          --accent-color: #8ab4f8;
+        }
+      }
+
+      :host[data-theme='dark'] {
+        --background-color: #121212;
+        --text-color: #ffffff;
+        --accent-color: #8ab4f8;
+      }
+
+      :host[data-theme='light'] {
+        --background-color: #ffffff;
+        --text-color: #000000;
+        --accent-color: #85afe7;
+      }
+
       .wrapper {
-        margin: var(--ddd-spacing-2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        /* Adaptive spacing and width */
+        margin: 0 auto;
         padding: var(--ddd-spacing-4);
+        max-width: 600px;
+        width: 90%;
+
+        /* Theming support */
+        background-color: var(--background-color);
+        color: var(--text-color);
+        border-radius: 12px;
+      }
+
+      :host {
+        display: block;
+        color: var(--text-color);
+        background-color: var(--background-color);
+        font-family: var(--ddd-font-navigation);
       }
       h3 span {
         font-size: var(--ice-planner-label-font-size, var(--ddd-font-size-s));
@@ -89,25 +131,38 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
       }
 
       button {
-        background-color: var(--ddd-theme-default, #cdf9fa);
+        background-color: var(--accent-color);
+        color: var(--text-color);
         font-size: 1rem;
-        padding: var(--ddd-spacing-2, 16px) var(--ddd-spacing-3, 16px);
-        border: none;
-        border-radius: 16px;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
         cursor: pointer;
+        transition: all 0.2s ease;
+        border: 2px solid black;
+        padding: var(--ddd-spacing-2) var(--ddd-spacing-4);
+        margin-top: var(--ddd-spacing-4);
       }
 
       button:hover {
-        background-color: var(--ddd-theme-default-hover, #c4c4c4);
-        transform: translateY(-1px);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        border-color: color-mix(in srgb, var(--text-color) 60%, var(--accent-color) 40%);
+        opacity: 0.95;
       }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
 
       .results {
         margin-top: var(--ddd-spacing-4);
         padding: var(--ddd-spacing-4);
-        background-color: var(--ddd-theme-secondary, #f0f0f0);
+        background-color: var(--background-color);
         border-radius: 8px;
+        border: 2px solid black;
       }
 
       .resultsPage {
@@ -125,6 +180,15 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
       }
+      @media (prefers-color-scheme: dark) {
+        button {
+          border: 2px solid white;
+        }
+
+        .results {
+          border: 2px solid white;
+        }
+      }
 
     `];
   }
@@ -132,6 +196,8 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
   // Lit render the HTML
   render() {
     return html`
+    <div class="wrapper">
+    <h1>Penguins Hockey Planner</h1>
       <div class="logo-section">
       <img src="${this.logo}" alt="${this.teamName} Logo" class="team-logo" />
       </div>
@@ -167,16 +233,17 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
           min="1"
         />
 
-        <button @click="${this._calculateTotals}">Calculate</button>
+        <button @click="${() => this._calculateTotals()}">Calculate</button>
         <div class="resultsPage">Results for ${this.teamName}</div>
         <div class="results">
         Jersey Cost: $${this.totalJersey}<br>
         Ice Cost: $${this.totalIce}<br>
         Coach Cost: $${this.totalCoach}<br>
         Overhead: $${this.totalOverhead}<br>
-        <strong>Total Cost: $${this.totalCost}</strong>
+        <strong>Total Cost: $${this.totalCost}</strong><br>
+        <strong>Cost per Player: $${(this.costPerPlayer).toFixed(2)}</strong>
         </div>
-  </div>
+        </div>
         <slot></slot>
     `;
   }
@@ -192,6 +259,7 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
     this.totalOverhead = (this.totalIce + this.totalCoach + this.totalJersey) * this.overhead;
 
     this.totalCost = this.totalIce + this.totalCoach + this.totalJersey + this.totalOverhead;
+    this.costPerPlayer = (this.totalCost / this.playerAmount);
   }  
   /**
    * haxProperties integration via file reference
