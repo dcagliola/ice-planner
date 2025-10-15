@@ -2,6 +2,7 @@
  * Copyright 2025 dcagliola
  * @license Apache-2.0, see LICENSE for full text.
  */
+import "./ice-results.js";
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
@@ -228,16 +229,16 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
         />
 
         <button @click="${() => this._calculateTotals()}">Calculate</button>
-        <div class="resultsPage">Results for ${this.teamName}</div>
-        <div class="results">
-        Jersey Cost: $${this.totalJersey}<br>
-        Ice Cost: $${this.totalIce}<br>
-        Coach Cost: $${this.totalCoach}<br>
-        Overhead: $${this.totalOverhead}<br>
-        <strong>Total Cost: $${this.totalCost}</strong><br>
-        <strong>Cost per Player: $${(this.costPerPlayer).toFixed(2)}</strong>
-        </div>
-        </div>
+        <ice-results
+        .teamName=${this.teamName}
+        .totalJersey=${this.totalJersey}
+        .totalIce=${this.totalIce}
+        .totalCoach=${this.totalCoach}
+        .totalOverhead=${this.totalOverhead}
+        .totalCost=${this.totalCost}
+        .costPerPlayer=${this.costPerPlayer}
+      ></ice-results>
+  </div>
         <slot></slot>
     `;
   }
