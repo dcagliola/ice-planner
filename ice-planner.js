@@ -21,12 +21,9 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.teamName = "Penguins";
-    this.jerseyCost = 88;
     this.playerAmount = 1;
     this.iceCost = 300;
     this.hours = 50;
-    this.overhead = 0.02;
-    this.coachCost = 3000;
     this.coachAmount = 1;
     this.totalJersey = 0;
     this.totalIce = 0;
@@ -42,12 +39,9 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       teamName: { type: String },
-      jerseyCost: { type: Number },
       playerAmount: { type: Number },
       iceCost: { type: Number },
       hours: { type: Number },
-      overhead: { type: Number },
-      coachCost: { type: Number },
       coachAmount: { type: Number },
       totalJersey: { type: Number },
       totalIce: { type: Number },
@@ -252,11 +246,11 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
   // Originally, I had individual methods for every different 
   // calculation, which was really dumb. Thanks AI for the correction.
   _calculateTotals() {
-    this.totalJersey = this.jerseyCost * this.playerAmount;
+    this.totalJersey = 88 * this.playerAmount;
     this.totalIce = this.iceCost * this.hours;
-    this.totalCoach = this.coachCost * this.coachAmount;
+    this.totalCoach = 3000 * this.coachAmount;
   
-    this.totalOverhead = (this.totalIce + this.totalCoach + this.totalJersey) * this.overhead;
+    this.totalOverhead = (this.totalIce + this.totalCoach + this.totalJersey) * 0.02;
 
     this.totalCost = this.totalIce + this.totalCoach + this.totalJersey + this.totalOverhead;
     this.costPerPlayer = (this.totalCost / this.playerAmount);
