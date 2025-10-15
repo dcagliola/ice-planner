@@ -61,11 +61,11 @@ export class IceResults extends LitElement {
     return html`
       <div class="results-container">
         <div class="results-title">Results for ${this.teamName}</div>
-        Jersey Cost: $${this.totalJersey}<br />
-        Ice Cost: $${this.totalIce}<br />
-        Coach Cost: $${this.totalCoach}<br />
-        Overhead: $${this.totalOverhead}<br />
-        <strong>Total Cost: $${this.totalCost}</strong><br />
+        Jersey Cost: $${this.totalJersey.toFixed(2)}<br />
+        Ice Cost: $${this.totalIce.toFixed(2)}<br />
+        Coach Cost: $${this.totalCoach.toFixed(2)}<br />
+        Overhead: $${this.totalOverhead.toFixed(2)}<br />
+        <strong>Total Cost: $${this.totalCost.toFixed(2)}</strong><br />
         <strong>Cost per Player: $${this.costPerPlayer.toFixed(2)}</strong>
       </div>
     `;
