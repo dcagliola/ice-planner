@@ -51,6 +51,7 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
       totalCost: { type: Number },
       logo: { type: String },
       costPerPlayer: { type: Number },
+      shareURL: { type: String },
     };
   }
 
@@ -238,11 +239,45 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
         .totalCost=${this.totalCost}
         .costPerPlayer=${this.costPerPlayer}
       ></ice-results>
-  </div>
-        <slot></slot>
-    `;
+
+    <button @click=${() => this.copyShareLink()}>Copy Share Link</button>
+
+    </div>
+    <slot></slot>
+  `;
   }
 
+  copyShareLink() {
+    this.buildURL();
+    navigator.clipboard
+      .writeText(this.shareURL)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        alert("Could not copy link. Please try again.");
+      });
+  }
+  
+  
+  buildURL() {
+    const baseUrl = globalThis.location.origin;
+    const params = new URLSearchParams({
+      team: this.teamName,
+      players: this.playerAmount,
+      iceCost: this.iceCost,
+      hours: this.hours,
+      coaches: this.coachAmount
+    });
+  
+    this.shareURL = `${baseUrl}?${params.toString()}`;
+  }
+  
+  connectedCallback() {
+    super.connectedCallback();
+    const params = new URLSearchParams(globalThis.location.search);
+  }
+  
   // This calculates all my totals. 
   // Originally, I had individual methods for every different 
   // calculation, which was really dumb. Thanks AI for the correction.
