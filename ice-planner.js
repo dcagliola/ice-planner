@@ -276,7 +276,15 @@ export class IcePlanner extends DDDSuper(I18NMixin(LitElement)) {
   connectedCallback() {
     super.connectedCallback();
     const params = new URLSearchParams(globalThis.location.search);
+  
+    // Check and apply URL parameters if they exist
+    if (params.has("team")) this.teamName = params.get("team");
+    if (params.has("players")) this.playerAmount = Number(params.get("players"));
+    if (params.has("iceCost")) this.iceCost = Number(params.get("iceCost"));
+    if (params.has("hours")) this.hours = Number(params.get("hours"));
+    if (params.has("coaches")) this.coachAmount = Number(params.get("coaches"));
   }
+  
   
   // This calculates all my totals. 
   // Originally, I had individual methods for every different 
